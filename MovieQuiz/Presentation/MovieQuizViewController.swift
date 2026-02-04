@@ -66,6 +66,8 @@ final class MovieQuizViewController: UIViewController {
         super.viewDidLoad()
         let currentQuestion = questions[currentQuestionIndex]
         let quizStepViewModel = convert(model: currentQuestion)
+        imageView.layer.masksToBounds = true
+        imageView.layer.cornerRadius = 20
         show(quiz: quizStepViewModel)
     }
     
@@ -100,7 +102,6 @@ final class MovieQuizViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     private func showAnswerResult(isCorrect: Bool) {
-        imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         if (isCorrect){
             imageView.layer.borderColor = UIColor.ypGreenIOS.cgColor
@@ -112,8 +113,9 @@ final class MovieQuizViewController: UIViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.showQuestionOrResults()
             self.imageView.layer.borderWidth = 0
+            self.yesButton.isEnabled = true
+            self.noButton.isEnabled = true
         }
-        imageView.layer.cornerRadius = 20
     }
     private func showQuestionOrResults(){
         if (currentQuestionIndex == questions.count - 1){
@@ -131,17 +133,23 @@ final class MovieQuizViewController: UIViewController {
             show(quiz: viewModel)
         }
     }
+    @IBOutlet weak private var noButton: UIButton!
+    @IBOutlet weak private var yesButton: UIButton!
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var textLabel: UILabel!
     @IBOutlet private var counterLabel: UILabel!
     
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
+        self.yesButton.isEnabled = false
+        self.noButton.isEnabled = false
         let clickedAnswer = true
         let currentQuestion = questions[currentQuestionIndex]
         showAnswerResult(isCorrect: clickedAnswer == currentQuestion.correctAnswer)
     }
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
+        self.yesButton.isEnabled = false
+        self.noButton.isEnabled = false
         let clickedAnswer = false
         let currentQuestion = questions[currentQuestionIndex]
         showAnswerResult(isCorrect: clickedAnswer == currentQuestion.correctAnswer)
